@@ -21,3 +21,16 @@ def format_number(value):
 
     except (ValueError, TypeError):
         return value
+
+@register.filter(name='sum_attribute')
+def sum_attribute(queryset, attribute):
+    """
+    Suma un atributo específico de un queryset de objetos.
+    Ejemplo: {{ mi_queryset|sum_attribute:'monto' }}
+    """
+    total = Decimal('0.00')
+    for item in queryset:
+        value = getattr(item, attribute, 0)
+        if value is not None and isinstance(value, (int, float, Decimal)):
+            total += Decimal(str(value))
+    return total

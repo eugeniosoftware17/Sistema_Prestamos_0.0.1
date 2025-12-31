@@ -43,6 +43,8 @@ urlpatterns = [
     path('prestamos/nuevo/', views.loan_add, name='loan_add'),
     # Muestra los detalles de un préstamo específico y su tabla de amortización.
     path('prestamos/<int:pk>/', views.loan_detail, name='loan_detail'),
+    # Ruta para la versión imprimible de los detalles del préstamo
+    path('prestamos/<int:pk>/imprimir/', views.loan_detail_print, name='loan_detail_print'),
     # Muestra la lista de préstamos activos.
     # path('prestamos/activos/', views.loan_list, name='loan_list'),
     path('prestamos/activos/', views_cbv.LoanListView.as_view(), name='loan_list'),
@@ -55,6 +57,8 @@ urlpatterns = [
     # --- URLs para Pagos ---
     # Muestra el formulario para registrar un nuevo pago.
     path('pagos/nuevo/<int:loan_id>/', views.payment_add, name='payment_add'),
+    # Ruta para la versión imprimible de un recibo de pago.
+    path('pagos/recibo/', views.payment_receipt_print, name='payment_receipt_print'),
 
     # --- URLs para Cobros ---
     path('cobros/', views.cobros_list, name='cobros_list'),

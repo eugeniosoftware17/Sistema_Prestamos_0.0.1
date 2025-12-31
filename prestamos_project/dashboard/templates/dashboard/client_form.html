@@ -12,139 +12,252 @@
     <a href="javascript:history.back()" class="btn btn-sm btn-outline-secondary">Volver</a>
 </div>
 
-<div class="card shadow">
-    <div class="card-body">
-        <!-- El formulario envía los datos a la misma URL por el método POST -->
-        <form method="post" novalidate>
-            <!-- Token de seguridad de Django -->
-            {% csrf_token %}
+<div class="form-container-wrapper">
+    <div class="card shadow">
+        <div class="card-body">
+            <!-- El formulario envía los datos a la misma URL por el método POST -->
+            <form method="post" novalidate>
+                <!-- Token de seguridad de Django -->
+                {% csrf_token %}
 
-            {% include 'includes/_messages.html' %}
+                {% include 'includes/_messages.html' %}
 
-            {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {{ form.non_field_errors }}
-                </div>
-            {% endif %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.nombres.id_for_label }}" class="form-label">{{ form.nombres.label }}</label>
-                    {{ form.nombres }}
-                    {% if form.nombres.errors %}<div class="invalid-feedback d-block">{{ form.nombres.errors.as_text }}</div>{% endif %}
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.apellidos.id_for_label }}" class="form-label">{{ form.apellidos.label }}</label>
-                    {{ form.apellidos }}
-                    {% if form.apellidos.errors %}<div class="invalid-feedback d-block">{{ form.apellidos.errors.as_text }}</div>{% endif %}
-                </div>
-            </div>
+                <!-- Pestañas de Navegación -->
+                <ul class="nav nav-tabs" id="formTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="personal-tab" href="#personal-panel" role="tab">Información Personal</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="laboral-tab" href="#laboral-panel" role="tab">Información Laboral</a>
+                    </li>
+                </ul>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.apodo.id_for_label }}" class="form-label">{{ form.apodo.label }}</label>
-                    {{ form.apodo }}
-                    {% if form.apodo.errors %}<div class="invalid-feedback d-block">{{ form.apodo.errors.as_text }}</div>{% endif %}
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">{{ form.fecha_nacimiento.label }}</label>
-                    {{ form.fecha_nacimiento }}
-                    {% if form.fecha_nacimiento.errors %}<div class="invalid-feedback d-block">{{ form.fecha_nacimiento.errors.as_text }}</div>{% endif %}
-                </div>
-            </div>
+                <!-- Contenido de las Pestañas -->
+                <div class="tab-content" id="formTabContent">
+                    <!-- Panel de Información Personal -->
+                    <div class="tab-panel active" id="personal-panel">
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.nombres.id_for_label }}" class="form-label">{{ form.nombres.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-user fa-fw"></i></span>
+                                    {{ form.nombres }}
+                                </div>
+                                {% if form.nombres.errors %}<div class="invalid-feedback d-block">{{ form.nombres.errors.as_text }}</div>{% endif %}
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.apellidos.id_for_label }}" class="form-label">{{ form.apellidos.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-user fa-fw"></i></span>
+                                    {{ form.apellidos }}
+                                </div>
+                                {% if form.apellidos.errors %}<div class="invalid-feedback d-block">{{ form.apellidos.errors.as_text }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.apodo.id_for_label }}" class="form-label">{{ form.apodo.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-signature fa-fw"></i></span>
+                                    {{ form.apodo }}
+                                </div>
+                                {% if form.apodo.errors %}<div class="invalid-feedback d-block">{{ form.apodo.errors.as_text }}</div>{% endif %}
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">{{ form.fecha_nacimiento.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-calendar-day fa-fw"></i></span>
+                                    {{ form.fecha_nacimiento }}
+                                </div>
+                                {% if form.fecha_nacimiento.errors %}<div class="invalid-feedback d-block">{{ form.fecha_nacimiento.errors.as_text }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.sexo.id_for_label }}" class="form-label">{{ form.sexo.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-venus-mars fa-fw"></i></span>
+                                    {{ form.sexo }}
+                                </div>
+                                {% if form.sexo.errors %}<div class="invalid-feedback d-block">{{ form.sexo.errors.as_text }}</div>{% endif %}
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.estado_civil.id_for_label }}" class="form-label">{{ form.estado_civil.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-ring fa-fw"></i></span>
+                                    {{ form.estado_civil }}
+                                </div>
+                                {% if form.estado_civil.errors %}<div class="invalid-feedback d-block">{{ form.estado_civil.errors.as_text }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.tipo_documento.id_for_label }}" class="form-label">{{ form.tipo_documento.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-id-card fa-fw"></i></span>
+                                    {{ form.tipo_documento }}
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.numero_documento.id_for_label }}" class="form-label">{{ form.numero_documento.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-hashtag fa-fw"></i></span>
+                                    {{ form.numero_documento }}
+                                </div>
+                                <small id="docHelp" class="form-text text-muted"></small>
+                                {% if form.numero_documento.errors %}<div class="invalid-feedback d-block">{{ form.numero_documento.errors.as_text }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.direccion.id_for_label }}" class="form-label">{{ form.direccion.label }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-map-location-dot fa-fw"></i></span>
+                                {{ form.direccion }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.telefono.id_for_label }}" class="form-label">{{ form.telefono.label }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-phone fa-fw"></i></span>
+                                {{ form.telefono }}
+                            </div>
+                            {% if form.telefono.errors %}<div class="invalid-feedback d-block">{{ form.telefono.errors.as_text }}</div>{% endif %}
+                        </div>
+                    </div>
 
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.sexo.id_for_label }}" class="form-label">{{ form.sexo.label }}</label>
-                    {{ form.sexo }}
-                    {% if form.sexo.errors %}<div class="invalid-feedback d-block">{{ form.sexo.errors.as_text }}</div>{% endif %}
+                    <!-- Panel de Información Laboral -->
+                    <div class="tab-panel" id="laboral-panel">
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.nombre_empresa.id_for_label }}" class="form-label">{{ form.nombre_empresa.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-building fa-fw"></i></span>
+                                    {{ form.nombre_empresa }}
+                                </div>
+                                {% if form.nombre_empresa.errors %}<div class="invalid-feedback d-block">{{ form.nombre_empresa.errors.as_text }}</div>{% endif %}
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.cargo.id_for_label }}" class="form-label">{{ form.cargo.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-briefcase fa-fw"></i></span>
+                                    {{ form.cargo }}
+                                </div>
+                                {% if form.cargo.errors %}<div class="invalid-feedback d-block">{{ form.cargo.errors.as_text }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.telefono_trabajo.id_for_label }}" class="form-label">{{ form.telefono_trabajo.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-phone fa-fw"></i></span>
+                                    {{ form.telefono_trabajo }}
+                                </div>
+                                {% if form.telefono_trabajo.errors %}<div class="invalid-feedback d-block">{{ form.telefono_trabajo.errors.as_text }}</div>{% endif %}
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.ingresos_mensuales.id_for_label }}" class="form-label">{{ form.ingresos_mensuales.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-dollar-sign fa-fw"></i></span>
+                                    {{ form.ingresos_mensuales }}
+                                </div>
+                                {% if form.ingresos_mensuales.errors %}<div class="invalid-feedback d-block">{{ form.ingresos_mensuales.errors.as_text }}</div>{% endif %}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <label for="{{ form.fecha_ingreso_trabajo.id_for_label }}" class="form-label">{{ form.fecha_ingreso_trabajo.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-calendar-check fa-fw"></i></span>
+                                    {{ form.fecha_ingreso_trabajo }}
+                                </div>
+                                {% if form.fecha_ingreso_trabajo.errors %}<div class="invalid-feedback d-block">{{ form.fecha_ingreso_trabajo.errors.as_text }}</div>{% endif %}
+                            </div>
+                            <div class="col-lg-6 mb-3 form-check align-self-center">
+                                {{ form.trabajo_actual }}
+                                <label for="{{ form.trabajo_actual.id_for_label }}" class="form-check-label">{{ form.trabajo_actual.label }}</label>
+                                {% if form.trabajo_actual.errors %}<div class="invalid-feedback d-block">{{ form.trabajo_actual.errors.as_text }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.estado_civil.id_for_label }}" class="form-label">{{ form.estado_civil.label }}</label>
-                    {{ form.estado_civil }}
-                    {% if form.estado_civil.errors %}<div class="invalid-feedback d-block">{{ form.estado_civil.errors.as_text }}</div>{% endif %}
+                
+                <div class="form-actions border-top pt-3 mt-3">
+                    <button type="submit" class="btn btn-primary">Guardar Cliente</button>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.tipo_documento.id_for_label }}" class="form-label">{{ form.tipo_documento.label }}</label>
-                    {{ form.tipo_documento }}
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.numero_documento.id_for_label }}" class="form-label">{{ form.numero_documento.label }}</label>
-                    {{ form.numero_documento }}
-                    <small id="docHelp" class="form-text text-muted"></small>
-                    {% if form.numero_documento.errors %}<div class="invalid-feedback d-block">{{ form.numero_documento.errors.as_text }}</div>{% endif %}
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="{{ form.direccion.id_for_label }}" class="form-label">{{ form.direccion.label }}</label>
-                {{ form.direccion }}
-            </div>
-
-            <div class="mb-3">
-                <label for="{{ form.telefono.id_for_label }}" class="form-label">{{ form.telefono.label }}</label>
-                {{ form.telefono }}
-                {% if form.telefono.errors %}<div class="invalid-feedback d-block">{{ form.telefono.errors.as_text }}</div>{% endif %}
-            </div>
-
-            <hr>
-            <h5 class="mb-3">Información Laboral</h5>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.nombre_empresa.id_for_label }}" class="form-label">{{ form.nombre_empresa.label }}</label>
-                    {{ form.nombre_empresa }}
-                    {% if form.nombre_empresa.errors %}<div class="invalid-feedback d-block">{{ form.nombre_empresa.errors.as_text }}</div>{% endif %}
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.cargo.id_for_label }}" class="form-label">{{ form.cargo.label }}</label>
-                    {{ form.cargo }}
-                    {% if form.cargo.errors %}<div class="invalid-feedback d-block">{{ form.cargo.errors.as_text }}</div>{% endif %}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.telefono_trabajo.id_for_label }}" class="form-label">{{ form.telefono_trabajo.label }}</label>
-                    {{ form.telefono_trabajo }}
-                    {% if form.telefono_trabajo.errors %}<div class="invalid-feedback d-block">{{ form.telefono_trabajo.errors.as_text }}</div>{% endif %}
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.ingresos_mensuales.id_for_label }}" class="form-label">{{ form.ingresos_mensuales.label }}</label>
-                    {{ form.ingresos_mensuales }}
-                    {% if form.ingresos_mensuales.errors %}<div class="invalid-feedback d-block">{{ form.ingresos_mensuales.errors.as_text }}</div>{% endif %}
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="{{ form.fecha_ingreso_trabajo.id_for_label }}" class="form-label">{{ form.fecha_ingreso_trabajo.label }}</label>
-                    {{ form.fecha_ingreso_trabajo }}
-                    {% if form.fecha_ingreso_trabajo.errors %}<div class="invalid-feedback d-block">{{ form.fecha_ingreso_trabajo.errors.as_text }}</div>{% endif %}
-                </div>
-                <div class="col-md-6 mb-3 form-check align-self-center">
-                    {{ form.trabajo_actual }}
-                    <label for="{{ form.trabajo_actual.id_for_label }}" class="form-check-label">{{ form.trabajo_actual.label }}</label>
-                    {% if form.trabajo_actual.errors %}<div class="invalid-feedback d-block">{{ form.trabajo_actual.errors.as_text }}</div>{% endif %}
-                </div>
-            </div>
-            
-            <div class="form-actions border-top pt-3 mt-3">
-                <button type="submit" class="btn btn-primary">Guardar Cliente</button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<style>
+    .form-container-wrapper {
+        max-width: 960px; /* Ancho máximo del contenedor del formulario */
+        margin: 0 auto; /* Centrar el contenedor */
+    }
+    .nav-tabs {
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .nav-tabs .nav-item .nav-link {
+        border: 1px solid transparent;
+        border-top-left-radius: .35rem;
+        border-top-right-radius: .35rem;
+        color: #6c757d;
+        padding: .75rem 1.25rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .nav-tabs .nav-item .nav-link.active {
+        color: #2c3e50;
+        background-color: #fff;
+        border-color: #dee2e6 #dee2e6 #fff;
+        border-bottom: 2px solid #fff;
+        margin-bottom: -1px;
+    }
+    .tab-panel {
+        display: none;
+    }
+    .tab-panel.active {
+        display: block;
+    }
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Funcionalidad de las pestañas
+    const tabs = document.querySelectorAll('.nav-tabs .nav-link');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            panels.forEach(p => p.classList.remove('active'));
+
+            tab.classList.add('active');
+            const targetPanel = document.querySelector(tab.getAttribute('href'));
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+        });
+    });
+
+    // Funcionalidad existente para el texto de ayuda del documento
     const tipoDocumento = document.getElementById('{{ form.tipo_documento.id_for_label }}');
     const docHelp = document.getElementById('docHelp');
 
     function updateHelpText() {
+        if (!tipoDocumento || !docHelp) return;
         if (tipoDocumento.value === 'cedula') {
             docHelp.textContent = 'Debe contener 11 dígitos numéricos.';
         } else if (tipoDocumento.value === 'pasaporte') {
@@ -152,10 +265,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Actualizar al cargar la página y al cambiar la selección
     updateHelpText();
-    tipoDocumento.addEventListener('change', updateHelpText);
+    if (tipoDocumento) {
+        tipoDocumento.addEventListener('change', updateHelpText);
+    }
 });
 </script>
-
 {% endblock %}

@@ -12,7 +12,10 @@
         <p>Información detallada del préstamo y su tabla de amortización.</p>
     </div>
     <div class="header-actions">
-        <a href="{% url 'payment_add' loan_id=el_prestamo_actual.id %}" class="btn btn-primary">Registrar Pago</a>
+        {% if el_prestamo_actual.estado != 'pagado' %}
+            <a href="{% url 'payment_add' loan_id=el_prestamo_actual.id %}" class="btn btn-primary">Registrar Pago</a>
+        {% endif %}
+        <a href="{% url 'loan_detail_print' pk=el_prestamo_actual.id %}" target="_blank" class="btn btn-secondary ms-2"><i class="fa-solid fa-print me-2"></i>Imprimir</a>
     </div>
 </header>
 
@@ -20,7 +23,7 @@
     <a href="javascript:history.back()" class="btn btn-sm btn-outline-secondary">Volver</a>
 </div>
 
-{% include 'includes/_messages.html' %}
+
 
 <div class="content-container">
         <div class="details-card">

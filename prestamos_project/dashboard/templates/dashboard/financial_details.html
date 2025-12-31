@@ -198,5 +198,19 @@
     .text-info-light { color: #66d1d1 !important; }
     .text-xs { font-size: .8rem; }
     .text-gray-800 { color: #5a5c69 !important; }
+
+    /* Estilos para dispositivos pequeños */
+    @media (max-width: 768px) {
+      .card .card-body .h5,
+      .card .card-body .h4 {
+        font-size: 1.25rem; /* Reducir tamaño de fuente para los números */
+      }
+      .card .card-body .display-4 {
+        font-size: 2.5rem; /* Reducir tamaño para los números más grandes */
+      }
+      .card .card-body {
+        padding: 1rem; /* Reducir el padding dentro de la tarjeta */
+      }
+    }
 </style>
 {% endblock %}

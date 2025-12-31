@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ titulo_pagina|default:"Configuración" }}
+{% endblock title %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">{{ titulo_pagina|default:"Configuración" }}</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{% url 'panel_informativo' %}">Inicio</a></li>
+        <li class="breadcrumb-item active">{{ titulo_pagina }}</li>
+    </ol>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Ajustes de Impresión de Documentos</h6>
+        </div>
+        <div class="card-body">
+            
+            <p class="mb-4">
+                Desde aquí puedes personalizar la información que aparecerá en los reportes impresos, como los detalles de un préstamo.
+            </p>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                {# Campo para el Logo #}
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <label for="{{ form.logo.id_for_label }}" class="form-label"><strong>{{ form.logo.label }}</strong></label>
+                            {{ form.logo }}
+                            {% if form.logo.help_text %}
+                                <div class="form-text">{{ form.logo.help_text }}</div>
+                            {% endif %}
+                            {% for error in form.logo.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Logo actual:</strong></p>
+                        {% if form.instance.logo %}
+                            <img src="{{ form.instance.logo.url }}" alt="Logo actual" class="img-fluid rounded" style="max-height: 80px; border: 1px solid #ddd; padding: 5px;">
+                        {% else %}
+                            <p class="text-muted">No hay logo.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <hr>
+
+                {# Campo para el Pie de Página #}
+                <div class="mb-3">
+                    <label for="{{ form.pie_de_pagina.id_for_label }}" class="form-label"><strong>{{ form.pie_de_pagina.label }}</strong></label>
+                    {{ form.pie_de_pagina }}
+                    {% if form.pie_de_pagina.help_text %}
+                        <div class="form-text">{{ form.pie_de_pagina.help_text }}</div>
+                    {% endif %}
+                    {% for error in form.pie_de_pagina.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <hr>
+
+                {# Opciones Booleanas #}
+                <h6 class="mb-3">Secciones a mostrar en el reporte:</h6>
+
+                <div class="form-check mb-2">
+                    {{ form.mostrar_seccion_garante }}
+                    <label class="form-check-label" for="{{ form.mostrar_seccion_garante.id_for_label }}">
+                        <strong>{{ form.mostrar_seccion_garante.label }}</strong>
+                    </label>
+                    {% if form.mostrar_seccion_garante.help_text %}
+                        <div class="form-text">{{ form.mostrar_seccion_garante.help_text }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-check mb-4">
+                    {{ form.mostrar_tabla_amortizacion }}
+                    <label class="form-check-label" for="{{ form.mostrar_tabla_amortizacion.id_for_label }}">
+                        <strong>{{ form.mostrar_tabla_amortizacion.label }}</strong>
+                    </label>
+                    {% if form.mostrar_tabla_amortizacion.help_text %}
+                        <div class="form-text">{{ form.mostrar_tabla_amortizacion.help_text }}</div>
+                    {% endif %}
+                </div>
+
+                <hr>
+
+                {# Botón de Guardar #}
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-save me-2"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

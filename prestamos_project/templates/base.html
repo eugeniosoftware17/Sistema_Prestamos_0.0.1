@@ -30,10 +30,6 @@
       ============================================
       INCORPORACIÓN DE BOOTSTRAP 5 (CSS)
       ============================================
-      Se añade el CSS de Bootstrap desde un CDN (Content Delivery Network).
-      Esto proporciona todos los estilos del framework para los componentes,
-      el sistema de rejilla y las utilidades, sin necesidad de alojar los archivos localmente.
-      Se coloca en el <head> para que los estilos se carguen antes de que se renderice el cuerpo de la página.
     -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
@@ -47,21 +43,21 @@
     <!-- BARRA DE NAVEGACIÓN SUPERIOR (FIJA) -->
     <!-- =================================== -->
     <header class="top-navbar">
-        <!-- Botón Hamburguesa para pantallas pequeñas (visible solo en móvil/tablet) -->
-                <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
+        <!-- Botón Hamburguesa para pantallas pequeñas -->
+        <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
             <i class="fa-solid fa-bars"></i>
         </button>
 
         <!-- Logo de la empresa a la izquierda -->
         <a class="navbar-brand" href="{% url 'panel_informativo' %}">
-            <img src="{% static 'img/LogoHEM.png' %}" alt="HEM Lending Logo" style="height: 50px; vertical-align: middle;" class="me-2">
-            <span style="vertical-align: middle;">
-                <strong class="d-block" style="font-size: 1.2rem; color: #2c3e50;">HEM Lending</strong>
-                <small class="d-block" style="font-size: 0.8rem; color: #566573;">Dinero rápido, decisiones inteligentes.</small>
+            <img src="{% static 'img/LogoHEM.png' %}" alt="HEM Lending Logo" class="me-2">
+            <span class="navbar-brand-text">
+                <strong class="navbar-brand-title">HEM Lending</strong>
+                <small class="navbar-brand-subtitle">Dinero rápido, decisiones inteligentes.</small>
             </span>
         </a>
         
-        <!-- Navegación de usuario a la derecha (usando Dropdown de Bootstrap) -->
+        <!-- Navegación de usuario a la derecha -->
         <nav class="user-nav ms-auto">
             <div class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -103,26 +99,34 @@
 
                     <li class="nav-title"><i class="fa-solid fa-folder-open fa-fw me-2"></i>GESTIÓN</li>
 
-                    <li class="nav-item nav-section-gestion dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa-solid fa-users fa-fw me-2"></i>Clientes
+                    <li class="nav-item nav-section-gestion">
+                        <a class="nav-link collapsed" href="#" data-bs-target="#submenu-clientes" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="submenu-clientes">
+                            <i class="fa-solid fa-users fa-fw me-2"></i>
+                            <span>Clientes</span>
+                            <i class="fa-solid fa-chevron-down submenu-arrow ms-auto"></i>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'client_list' %}">Ver Lista de Clientes</a></li>
-                            <li><a class="dropdown-item" href="{% url 'client_add' %}">Registrar Nuevo Cliente</a></li>
-                        </ul>
+                        <div class="collapse" id="submenu-clientes">
+                            <ul class="nav flex-column submenu">
+                                <li class="nav-item"><a class="nav-link" href="{% url 'client_list' %}">Ver Lista de Clientes</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{% url 'client_add' %}">Registrar Nuevo</a></li>
+                            </ul>
+                        </div>
                     </li>
 
-                    <li class="nav-item nav-section-gestion dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa-solid fa-hand-holding-dollar fa-fw me-2"></i>Préstamos
+                    <li class="nav-item nav-section-gestion">
+                        <a class="nav-link collapsed" href="#" data-bs-target="#submenu-prestamos" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="submenu-prestamos">
+                            <i class="fa-solid fa-hand-holding-dollar fa-fw me-2"></i>
+                            <span>Préstamos</span>
+                            <i class="fa-solid fa-chevron-down submenu-arrow ms-auto"></i>
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'loan_application_list' %}">Solicitudes de Préstamo</a></li>
-                            <li><a class="dropdown-item" href="{% url 'loan_list' %}">Ver Préstamos Activos</a></li>
-                            <li><a class="dropdown-item" href="{% url 'loan_add' %}">Registrar Nuevo Préstamo</a></li>
-                            <li><a class="dropdown-item" href="{% url 'paid_loan_list' %}">Ver Préstamos Pagados</a></li>
-                        </ul>
+                        <div class="collapse" id="submenu-prestamos">
+                            <ul class="nav flex-column submenu">
+                                <li><a class="nav-link" href="{% url 'loan_application_list' %}">Solicitudes</a></li>
+                                <li><a class="nav-link" href="{% url 'loan_list' %}">Préstamos Activos</a></li>
+                                <li><a class="nav-link" href="{% url 'loan_add' %}">Registrar Nuevo</a></li>
+                                <li><a class="nav-link" href="{% url 'paid_loan_list' %}">Préstamos Pagados</a></li>
+                            </ul>
+                        </div>
                     </li>
 
                     <li class="nav-title"><i class="fa-solid fa-sack-dollar fa-fw me-2"></i>FINANZAS</li>
@@ -136,6 +140,12 @@
                     </li>
 
                     <li class="nav-title"><i class="fa-solid fa-gears fa-fw me-2"></i>CONFIGURACIÓN</li>
+
+                    {% if user.is_staff %}
+                    <li class="nav-item nav-section-config">
+                        <a class="nav-link" href="{% url 'configuracion_impresion' %}"><i class="fa-solid fa-print fa-fw me-2"></i>Ajustes de Impresión</a>
+                    </li>
+                    {% endif %}
 
                     <li class="nav-item nav-section-config">
                         <a class="nav-link" href="{% url 'admin:gestion_prestamos_tipoprestamo_changelist' %}"><i class="fa-solid fa-tags fa-fw me-2"></i>Tipos de Préstamo</a>
@@ -158,6 +168,7 @@
     <!-- ÁREA DE CONTENIDO PRINCIPAL       -->
     <!-- ================================= -->
     <main class="main-content">
+        {% include 'includes/_messages.html' %}
         {% block content %}
         {% endblock %}
     </main>
@@ -166,101 +177,46 @@
       ==============================================================
       INCORPORACIÓN DE JQUERY
       ==============================================================
-      Se añade jQuery desde un CDN. Es un requisito para django-select2.
-      Debe cargarse antes del JavaScript de Bootstrap y de {{ form.media.js }}.
     -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-
-    <!-- El script de jQuery y el script personalizado para los menús ya no son necesarios -->
-    {{ form.media.js }}
-    <script>
-        // Espera a que todo el contenido del DOM esté cargado antes de ejecutar el script
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            /**
-             * Función genérica para manejar la apertura y cierre de los menús 
-             * (tanto el de usuario como el de la barra lateral).
-             */
-            const toggleHandler = function(event) {
-                // Previene que el navegador siga el enlace (ej. href="#")
-                event.preventDefault();
-
-                // Encuentra el menú desplegable que es hermano del elemento clickeado
-                const menu = this.nextElementSibling;
-                if (!menu) return; // Si no hay menú, no hace nada
-                
-                // Guarda si el menú actual ya estaba activo antes del clic
-                const isAlreadyActive = menu.classList.contains('active');
-
-                // Cierra todos los menús que estén abiertos para evitar tener múltiples menús abiertos
-                document.querySelectorAll('.submenu.active, .dropdown-menu.active').forEach(function(m) {
-                    m.classList.remove('active');
-                });
-
-                // Si el menú no estaba activo, lo abre. Si ya estaba activo, lo deja cerrado (efecto de cierre al volver a hacer clic).
-                if (!isAlreadyActive) {
-                    menu.classList.add('active');
-                }
-            };
-
-            // Selecciona todos los elementos que activan menús y les asigna el manejador de eventos
-            const toggles = document.querySelectorAll('[data-toggle="submenu"], [data-toggle="dropdown"]');
-            toggles.forEach(function(toggle) {
-                toggle.addEventListener('click', toggleHandler);
-            });
-
-            /**
-             * Cierra los menús si el usuario hace clic en cualquier lugar fuera de ellos.
-             * Esto mejora la experiencia de usuario.
-             */
-            window.addEventListener('click', function(event) {
-                // Comprueba si el clic no fue dentro de un menú de usuario o un activador de submenú
-                if (!event.target.closest('.user-menu') && !event.target.closest('[data-toggle="submenu"]')) {
-                    document.querySelectorAll('.submenu.active, .dropdown-menu.active').forEach(function(menu) {
-                        menu.classList.remove('active');
-                    });
-                }
-            });
-        });
-    </script>
-
-    <!--
-      ==============================================================
-      INCORPORACIÓN DE SELECT2 (JAVASCRIPT)
-      ==============================================================
-      Se añade el JS de Select2 desde un CDN, después de jQuery.
-    -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
-    <script>
-        // Inicialización manual de todos los widgets de Select2
-        $(document).ready(function() {
-            $('.django-select2').select2();
-        });
-    </script>
 
     <!--
       ==============================================================
       INCORPORACIÓN DE BOOTSTRAP 5 (JAVASCRIPT BUNDLE)
       ==============================================================
-      Se añade el JavaScript de Bootstrap (Bundle) desde un CDN.
-      El 'bundle' incluye Popper.js, que es necesario para componentes
-      avanzados como tooltips, popovers y menús desplegables.
-      Se coloca al final del <body> para no bloquear la renderización del contenido HTML.
     -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
+    <!--
+      ==============================================================
+      INCORPORACIÓN DE SELECT2 (JAVASCRIPT)
+      ==============================================================
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    {{ form.media.js }}
     <script>
-        // Script para auto-ocultar los mensajes de alerta después de 5 segundos
         document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa Select2 (con manejo de errores)
+            try {
+                $('.django-select2').select2();
+            } catch (e) {
+                console.error("Error al inicializar Select2:", e);
+            }
+
+            // Oculta las alertas después de 5 segundos
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(function(alert) {
                 setTimeout(function() {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }, 5000); // 5000 milisegundos = 5 segundos
+                    try {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    } catch (e) {
+                        // Ignorar si la alerta ya no existe
+                    }
+                }, 5000);
             });
         });
     </script>
+
 </body>
 </html>

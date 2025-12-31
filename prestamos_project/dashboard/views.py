@@ -5,6 +5,7 @@ from django.db.models import Sum, Value, DecimalField, Count, F, Q
 from django.db.models.functions import Coalesce
 from gestion_prestamos.forms import ClienteForm, PrestamoForm, PagoForm, TipoPrestamoForm, GastoPrestamoForm, RequisitoForm, GaranteForm, LoanRequestForm
 from gestion_prestamos.models import Prestamo, Cliente, Pago, Cuota, TipoPrestamo, Capital, GastoPrestamo, TipoGasto, Requisito
+from configuracion.models import ConfiguracionImpresion # Importa el modelo de configuración
 from django.forms import modelformset_factory
 from gestion_prestamos.utils import calcular_tabla_amortizacion, calcular_penalidad_cuota
 from django.contrib import messages
@@ -14,7 +15,8 @@ from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from datetime import date, timedelta
 from django.contrib.auth.views import PasswordChangeView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.utils.html import format_html
 import json
 
 # --- Vistas del Dashboard ---
@@ -347,6 +349,64 @@ def loan_detail(request, pk):
     }
     return render(request, 'dashboard/loan_detail.html', context)
 
+
+@login_required
+def loan_detail_print(request, pk):
+    """
+    Vista para generar una versión imprimible de los detalles de un préstamo,
+    utilizando la configuración de impresión global.
+    """
+    prestamo = get_object_or_404(Prestamo, pk=pk)
+    configuracion = ConfiguracionImpresion.load() # Carga la configuración global
+
+    cuotas = prestamo.cuotas.all().order_by('numero_cuota')
+    hoy = timezone.now().date()
+
+    # Calcular penalidades y estado de cada cuota
+    total_faltante = Decimal('0.00')
+    for cuota in cuotas:
+        cuota.is_overdue = cuota.fecha_vencimiento < hoy and cuota.estado in ['pendiente', 'pagada_parcialmente']
+        # No llamamos calcular_penalidad_cuota aquí para no modificar la BD
+        # La penalidad mostrada será la última guardada.
+        if cuota.estado != 'pagada':
+            total_faltante += (cuota.monto_total_a_pagar - cuota.total_pagado)
+
+    # Agregamos los totales
+    totales_amortizacion = cuotas.aggregate(
+        total_cuota=Coalesce(Sum('monto_cuota'), Value(0), output_field=DecimalField()),
+        total_capital=Coalesce(Sum('capital'), Value(0), output_field=DecimalField()),
+        total_interes=Coalesce(Sum('interes'), Value(0), output_field=DecimalField()),
+        total_penalidad=Coalesce(Sum('monto_penalidad_acumulada'), Value(0), output_field=DecimalField())
+    )
+    totales_amortizacion['total_a_pagar'] = totales_amortizacion['total_cuota'] + totales_amortizacion['total_penalidad']
+
+    ganancia_estimada = totales_amortizacion['total_interes']
+    total_penalidades_acumuladas = totales_amortizacion['total_penalidad']
+
+    # El total pagado no cambia
+    total_pagado = Pago.objects.filter(cuota__prestamo=prestamo).aggregate(
+        total=Coalesce(Sum('monto_pagado'), Value(0), output_field=DecimalField())
+    )['total']
+
+    # Verificar si hay un garante asociado al préstamo
+    garante = None
+    if hasattr(prestamo, 'garante') and prestamo.garante: # Asumiendo ForeignKey o OneToOne
+        garante = prestamo.garante
+
+    context = {
+        'el_prestamo_actual': prestamo,
+        'cuotas_del_prestamo': cuotas,
+        'totales_amortizacion': totales_amortizacion,
+        'pago_total_realizado': total_pagado,
+        'ganancia_estimada': ganancia_estimada,
+        'total_faltante': total_faltante,
+        'total_penalidades_acumuladas': total_penalidades_acumuladas,
+        'configuracion': configuracion, # Pasa la configuración global
+        'garante': garante, # Pasa el objeto garante si existe
+    }
+    return render(request, 'dashboard/loan_detail_print.html', context)
+
+
 @login_required
 def loan_list(request):
     """Muestra una lista de todos los préstamos activos con funcionalidad de búsqueda."""
@@ -390,12 +450,31 @@ def paid_loan_list(request):
 def payment_add(request, loan_id):
     """Maneja el registro de un pago."""
     prestamo = get_object_or_404(Prestamo, pk=loan_id)
+    
+    # Prevenir pagos a préstamos ya saldados
+    if prestamo.estado == 'pagado':
+        messages.warning(request, f"El préstamo #{prestamo.id} ya ha sido saldado y no admite nuevos pagos.")
+        return redirect('loan_detail', pk=prestamo.pk)
+
     if request.method == 'POST':
         form = PagoForm(request.POST)
         if form.is_valid():
             monto_pagado = form.cleaned_data['monto_pagado']
-            prestamo.registrar_pago(monto_pagado)
-            messages.success(request, f'Pago de ${monto_pagado} registrado exitosamente.')
+            pagos_creados = prestamo.registrar_pago(monto_pagado)
+            
+            # Crear el enlace para el recibo si se crearon pagos
+            if pagos_creados:
+                pids = ",".join(str(p.id) for p in pagos_creados)
+                receipt_url = reverse('payment_receipt_print') + f'?pids={pids}'
+                messages.success(request, format_html(
+                    'Pago de ${} registrado exitosamente. <a href="{}" target="_blank" class="alert-link">Imprimir Recibo</a>',
+                    monto_pagado,
+                    receipt_url
+                ))
+            else:
+                # Fallback por si no se crearon pagos (ej. monto 0 o préstamo ya pagado)
+                messages.warning(request, f'El pago de ${monto_pagado} no se pudo procesar. Es posible que el préstamo ya esté saldado.')
+
             if prestamo.estado == 'pagado':
                 messages.info(request, f'¡Felicidades! El préstamo #{prestamo.id} ha sido completamente saldado.')
             return redirect('loan_detail', pk=prestamo.pk)
@@ -409,14 +488,114 @@ def payment_add(request, loan_id):
 
 
 @login_required
-def cobros_list(request):
-    """Muestra una lista de todas las cuotas vencidas y no pagadas."""
-    hoy = timezone.now()
-    cuotas_vencidas = Cuota.objects.filter(fecha_vencimiento__lt=hoy, estado='pendiente').annotate(
-        dias_vencido=hoy - F('fecha_vencimiento')
-    ).order_by('fecha_vencimiento')
+def payment_receipt_print(request):
+    """
+    Genera un recibo imprimible para uno o más pagos registrados en una transacción.
+    """
+    pids = request.GET.get('pids')
+    if not pids:
+        return HttpResponse("Error: No se especificaron IDs de pago para el recibo.", status=400)
+
+    try:
+        pid_list = [int(pid) for pid in pids.split(',') if pid.isdigit()]
+    except (ValueError, TypeError):
+        return HttpResponse("Error: IDs de pago inválidos.", status=400)
+
+    pagos = Pago.objects.filter(id__in=pid_list).order_by('fecha_pago').select_related('cuota__prestamo__cliente')
+
+    if not pagos.exists():
+        return HttpResponse("Error: Pagos no encontrados.", status=404)
+
+    # Asumimos que todos los pagos en una transacción son del mismo préstamo
+    prestamo = pagos.first().cuota.prestamo
+    configuracion = ConfiguracionImpresion.load()
+    total_pagado_transaccion = pagos.aggregate(total=Sum('monto_pagado'))['total'] or Decimal('0.00')
+    
+    # --- CÁLCULO DE DATOS ADICIONALES ---
+    # 1. Número de recibo
+    numero_recibo = "-".join(str(pid) for pid in pid_list)
+
+    # 2. Saldo restante del préstamo
+    todas_las_cuotas = prestamo.cuotas.all()
+    saldo_restante_prestamo = Decimal('0.00')
+    for c in todas_las_cuotas:
+        # Se recalcula el estado de cada cuota para asegurar que el total_pagado sea el más reciente
+        # sin llamar a save() para no modificar la base de datos en una vista de solo lectura (GET)
+        c.actualizar_estado() 
+        if c.estado != 'pagada':
+            saldo_restante_prestamo += (c.monto_total_a_pagar - c.total_pagado)
+    
+    # 3. Saldo anterior (antes de esta transacción)
+    saldo_anterior = saldo_restante_prestamo + total_pagado_transaccion
+
+    # 4. Fecha del próximo pago
+    proxima_cuota_pendiente = prestamo.cuotas.filter(estado__in=['pendiente', 'pagada_parcialmente']).order_by('fecha_vencimiento').first()
+    fecha_proximo_pago = proxima_cuota_pendiente.fecha_vencimiento if proxima_cuota_pendiente else None
+
     context = {
-        'cuotas_vencidas': cuotas_vencidas
+        'pagos': pagos,
+        'prestamo': prestamo,
+        'cliente': prestamo.cliente,
+        'configuracion': configuracion,
+        'total_pagado_transaccion': total_pagado_transaccion,
+        'fecha_transaccion': pagos.first().fecha_pago,
+        # --- NUEVOS DATOS PARA LA PLANTILLA ---
+        'numero_recibo': numero_recibo,
+        'saldo_restante_prestamo': saldo_restante_prestamo,
+        'saldo_anterior': saldo_anterior,
+        'fecha_proximo_pago': fecha_proximo_pago,
+    }
+    return render(request, 'dashboard/payment_receipt_print.html', context)
+
+
+@login_required
+def cobros_list(request):
+    """
+    Muestra una lista avanzada de todas las cuotas vencidas y no pagadas,
+    con funcionalidades de búsqueda y ordenamiento.
+    """
+    hoy = timezone.now().date()
+    
+    # 1. Filtro base para cuotas vencidas
+    cuotas_query = Cuota.objects.filter(
+        fecha_vencimiento__lt=hoy,
+        estado__in=['pendiente', 'pagada_parcialmente', 'vencida']
+    ).select_related('prestamo__cliente')
+
+    # 2. Búsqueda por cliente
+    query = request.GET.get('q')
+    if query:
+        cuotas_query = cuotas_query.filter(
+            Q(prestamo__cliente__nombres__icontains=query) |
+            Q(prestamo__cliente__apellidos__icontains=query) |
+            Q(prestamo__cliente__numero_documento__icontains=query)
+        )
+
+    # 3. Anotar días de atraso
+    # Usamos F() para referenciar un campo de la base de datos directamente
+    cuotas_query = cuotas_query.annotate(
+        dias_vencido=hoy - F('fecha_vencimiento')
+    )
+
+    # 4. Ordenamiento
+    sort_by = request.GET.get('sort', '-dias_vencido') # Por defecto, más días de atraso primero
+    valid_sort_fields = [
+        'fecha_vencimiento', '-fecha_vencimiento', 
+        'dias_vencido', '-dias_vencido', 
+        'monto_cuota', '-monto_cuota',
+        'monto_penalidad_acumulada', '-monto_penalidad_acumulada',
+        'numero_cuota', '-numero_cuota',
+        'prestamo__cliente__nombres', '-prestamo__cliente__nombres'
+    ]
+    if sort_by not in valid_sort_fields:
+        sort_by = '-dias_vencido'
+    
+    cuotas_vencidas = cuotas_query.order_by(sort_by)
+
+    context = {
+        'cuotas_vencidas': cuotas_vencidas,
+        'query': query,
+        'current_sort': sort_by,
     }
     return render(request, 'dashboard/cobros_list.html', context)
 

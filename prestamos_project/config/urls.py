@@ -27,7 +27,18 @@ urlpatterns = [
     path('select2/', include('django_select2.urls')),
     
     # --- Rutas de la Aplicación ---
+    # Incluye las URLs para el nuevo módulo de configuración.
+    path('configuracion/', include('configuracion.urls')),
+
     # Incluye todas las URLs definidas en el archivo `urls.py` de la app `dashboard`.
     # Esto mantiene el proyecto organizado, ya que cada app gestiona sus propias URLs.
     path('', include('dashboard.urls')),
 ]
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+# Añade la URL de los archivos multimedia solo en modo DEBUG
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

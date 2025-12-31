@@ -1,48 +1,143 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load format_helpers %}
 
 {% block title %}Gestión de Cobros{% endblock %}
 
 {% block content %}
+<style>
+    .sort-link {
+        color: inherit;
+        text-decoration: none;
+    }
+    .sort-link:hover {
+        color: #0d6efd; /* Bootstrap primary color */
+    }
+    .sort-indicator {
+        font-size: 0.8em;
+        margin-left: 5px;
+    }
+    .summary-card {
+        background-color: #fff3cd;
+        border-left: 5px solid #ffc107;
+    }
+</style>
+
 <header class="page-header">
-    <h1>Gestión de Cobros</h1>
-    <p>Aquí se muestran todas las cuotas de préstamos que están vencidas.</p>
+    <div class="header-content">
+        <h1>Gestión de Cobros</h1>
+        <p>Cuotas vencidas que requieren atención inmediata.</p>
+    </div>
+    <div class="header-actions">
+        <form method="get" action="{% url 'cobros_list' %}">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Buscar cliente por nombre, cédula..." value="{{ query|default:'' }}">
+                <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-search"></i></button>
+            </div>
+        </form>
+    </div>
 </header>
 
 <div class="content-container">
+    {% if cuotas_vencidas %}
+        <div class="card summary-card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Resumen General de Cobros</h5>
+                {% with total_vencido=cuotas_vencidas|sum_attribute:'monto_total_a_pagar' total_penalidad=cuotas_vencidas|sum_attribute:'monto_penalidad_acumulada' %}
+                    <p class="mb-1">
+                        <strong>Total de Cuotas Vencidas:</strong> {{ cuotas_vencidas|length }}
+                    </p>
+                    <p class="mb-1">
+                        <strong>Suma de Penalidades:</strong> ${{ total_penalidad|intcomma }}
+                    </p>
+                    <p class="h4 text-danger">
+                        <strong>Monto Total Vencido a Cobrar: ${{ total_vencido|intcomma }}</strong>
+                    </p>
+                {% endwith %}
+            </div>
+        </div>
+    {% endif %}
+
     <div class="table-responsive">
-        <table class="table">
-            <thead>
+        <table class="table table-hover">
+            <thead class="table-light">
                 <tr>
-                    <th>Cliente</th>
-                    <th>Préstamo ID</th>
-                    <th>Cuota #</th>
-                    <th>Fecha de Vencimiento</th>
-                    <th>Días Vencido</th>
-                    <th>Monto Vencido</th>
+                    <th>
+                        <a href="?sort={% if current_sort == 'prestamo__cliente__nombres' %}-{% endif %}prestamo__cliente__nombres&q={{ query|default:'' }}" class="sort-link">
+                            Cliente
+                            {% if 'cliente' in current_sort %}<i class="fa-solid {% if '-' in current_sort %}fa-arrow-down{% else %}fa-arrow-up{% endif %} sort-indicator"></i>{% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?sort={% if current_sort == 'dias_vencido' %}-{% endif %}dias_vencido&q={{ query|default:'' }}" class="sort-link">
+                            Días Atraso
+                            {% if 'dias_vencido' in current_sort %}<i class="fa-solid {% if '-' in current_sort %}fa-arrow-down{% else %}fa-arrow-up{% endif %} sort-indicator"></i>{% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?sort={% if current_sort == 'fecha_vencimiento' %}-{% endif %}fecha_vencimiento&q={{ query|default:'' }}" class="sort-link">
+                            Fecha Venc.
+                            {% if 'fecha_vencimiento' in current_sort %}<i class="fa-solid {% if '-' in current_sort %}fa-arrow-down{% else %}fa-arrow-up{% endif %} sort-indicator"></i>{% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?sort={% if current_sort == 'numero_cuota' %}-{% endif %}numero_cuota&q={{ query|default:'' }}" class="sort-link">
+                            Cuota #
+                            {% if 'numero_cuota' in current_sort %}<i class="fa-solid {% if '-' in current_sort %}fa-arrow-down{% else %}fa-arrow-up{% endif %} sort-indicator"></i>{% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?sort={% if current_sort == 'monto_cuota' %}-{% endif %}monto_cuota&q={{ query|default:'' }}" class="sort-link">
+                            Monto Cuota
+                            {% if 'monto_cuota' in current_sort %}<i class="fa-solid {% if '-' in current_sort %}fa-arrow-down{% else %}fa-arrow-up{% endif %} sort-indicator"></i>{% endif %}
+                        </a>
+                    </th>
+                    <th>
+                        <a href="?sort={% if current_sort == 'monto_penalidad_acumulada' %}-{% endif %}monto_penalidad_acumulada&q={{ query|default:'' }}" class="sort-link">
+                            Penalidad
+                            {% if 'monto_penalidad_acumulada' in current_sort %}<i class="fa-solid {% if '-' in current_sort %}fa-arrow-down{% else %}fa-arrow-up{% endif %} sort-indicator"></i>{% endif %}
+                        </a>
+                    </th>
+                    <th class="text-danger">
+                        Total a Pagar
+                        {% if 'monto_total_a_pagar' in current_sort %}<i class="fa-solid {% if '-' in current_sort %}fa-arrow-down{% else %}fa-arrow-up{% endif %} sort-indicator"></i>{% endif %}
+                    </th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 {% for cuota in cuotas_vencidas %}
-                <tr>
-                    <td>{{ cuota.prestamo.cliente }}</td>
-                    <td>{{ cuota.prestamo.id }}</td>
-                    <td>{{ cuota.numero_cuota }}</td>
-                    <td>{{ cuota.fecha_vencimiento|date:"d/m/Y" }}</td>
-                    <td>{{ cuota.dias_vencido.days }}</td>
-                    <td>${{ cuota.monto_cuota|intcomma|floatformat:2 }}</td>
+                <tr class="align-middle">
                     <td>
-                        <a href="{% url 'payment_add' loan_id=cuota.prestamo.id %}" class="btn btn-danger btn-sm">Registrar Pago</a>
+                        <strong>{{ cuota.prestamo.cliente }}</strong>
+                        <br>
+                        <small class="text-muted">{{ cuota.prestamo.cliente.numero_documento }}</small>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge bg-danger">{{ cuota.dias_vencido.days }}</span>
+                    </td>
+                    <td>{{ cuota.fecha_vencimiento|date:"d/m/Y" }}</td>
+                    <td>{{ cuota.numero_cuota }} de {{ cuota.prestamo.plazo }}</td>
+                    <td>${{ cuota.monto_cuota|intcomma }}</td>
+                    <td>${{ cuota.monto_penalidad_acumulada|intcomma }}</td>
+                    <td class="fw-bold text-danger">${{ cuota.monto_total_a_pagar|intcomma }}</td>
+                    <td>
+                        <a href="{% url 'loan_detail' pk=cuota.prestamo.id %}" class="btn btn-outline-primary btn-sm">
+                            Ver Préstamo
+                        </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="7" class="text-center">No hay cobros vencidos.</td>
+                    <td colspan="8" class="text-center py-5">
+                        <h4><i class="fa-solid fa-check-circle text-success"></i> ¡Excelente!</h4>
+                        <p>No hay cuotas vencidas en este momento.</p>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
 {% endblock %}

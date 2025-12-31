@@ -26,8 +26,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY', default='django-insecure-ux+45xfu@24j81&(q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', default=True)
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['127.0.0.1', 'localhost','10.0.0.41'])
 
 # Application definition
 

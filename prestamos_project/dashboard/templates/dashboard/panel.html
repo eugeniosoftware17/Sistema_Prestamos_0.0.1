@@ -29,73 +29,49 @@
     <h3 class="mb-3">Resumen Financiero</h3>
     <div class="row">
         <!-- Tarjeta: Patrimonio Total -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100 border-left-success shadow">
+        <div class="col-xl-3 col-md-6 col-6 mb-4">
+            <div class="card summary-card h-100 shadow">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Patrimonio Total</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">${{ patrimonio_total|format_number }}</div>
-                            <small class="text-muted">Caja + Cartera</small>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa-solid fa-shield-halved fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+                    <i class="fa-solid fa-shield-halved fa-2x summary-card-icon text-success"></i>
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Patrimonio Total</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">${{ patrimonio_total|format_number }}</div>
+                    <small class="text-muted">Caja + Cartera</small>
                 </div>
             </div>
         </div>
 
         <!-- Tarjeta: Dinero en Caja -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100 border-left-primary shadow">
+        <div class="col-xl-3 col-md-6 col-6 mb-4">
+            <div class="card summary-card h-100 shadow">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Dinero en Caja</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">${{ dinero_en_caja|format_number }}</div>
-                            <small class="text-muted">Efectivo disponible</small>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa-solid fa-cash-register fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+                    <i class="fa-solid fa-cash-register fa-2x summary-card-icon text-primary"></i>
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Dinero en Caja</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">${{ dinero_en_caja|format_number }}</div>
+                    <small class="text-muted">Efectivo disponible</small>
                 </div>
             </div>
         </div>
 
         <!-- Tarjeta: Cartera Activa -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100 border-left-warning shadow">
+        <div class="col-xl-3 col-md-6 col-6 mb-4">
+            <div class="card summary-card h-100 shadow">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Cartera Activa</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">${{ dinero_en_la_calle|format_number }}</div>
-                            <small class="text-muted">Capital en la calle</small>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa-solid fa-hand-holding-dollar fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+                    <i class="fa-solid fa-hand-holding-dollar fa-2x summary-card-icon text-warning"></i>
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Cartera Activa</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">${{ dinero_en_la_calle|format_number }}</div>
+                    <small class="text-muted">Capital en la calle</small>
                 </div>
             </div>
         </div>
 
         <!-- Tarjeta: Ganancia Realizada -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card h-100 border-left-info shadow">
+        <div class="col-xl-3 col-md-6 col-6 mb-4">
+            <div class="card summary-card h-100 shadow">
                 <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Ganancia Realizada</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">${{ ganancia_realizada|format_number }}</div>
-                            <small class="text-muted">Intereses cobrados</small>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa-solid fa-chart-line fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
+                    <i class="fa-solid fa-chart-line fa-2x summary-card-icon text-info"></i>
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Ganancia Realizada</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">${{ ganancia_realizada|format_number }}</div>
+                    <small class="text-muted">Intereses cobrados</small>
                 </div>
             </div>
         </div>
@@ -110,37 +86,25 @@
     <h3 class="mb-3">Estadísticas Generales</h3>
     <div class="row">
         <!-- Tarjeta: Total de Clientes -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-md-6 col-6 mb-4">
             <a href="{% url 'client_list' %}" class="text-decoration-none">
-                <div class="card h-100 border-left-info shadow">
+                <div class="card summary-card h-100 shadow">
                     <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total de Clientes</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_clientes }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fa-solid fa-users fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
+                        <i class="fa-solid fa-users fa-2x summary-card-icon text-info"></i>
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total de Clientes</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_clientes }}</div>
                     </div>
                 </div>
             </a>
         </div>
         <!-- Tarjeta: Préstamos Activos -->
-        <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-md-6 col-6 mb-4">
             <a href="{% url 'loan_list' %}" class="text-decoration-none">
-                <div class="card h-100 border-left-info shadow">
+                <div class="card summary-card h-100 shadow">
                     <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Préstamos Activos</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_prestamos_activos }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fa-solid fa-file-invoice-dollar fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
+                        <i class="fa-solid fa-file-invoice-dollar fa-2x summary-card-icon text-info"></i>
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Préstamos Activos</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_prestamos_activos }}</div>
                     </div>
                 </div>
             </a>
@@ -222,22 +186,4 @@
         </div>
     </div>
 </section>
-
-<!-- Estilos adicionales para las tarjetas de resumen -->
-<style>
-    /* Solución de alineación con Flexbox */
-    .card-body .row .col.mr-2 {
-        display: flex;
-        flex-direction: column;
-        justify-content: center; /* Centra el contenido verticalmente */
-    }
-
-    .border-left-primary { border-left: .25rem solid #4e73df !important; }
-    .border-left-secondary { border-left: .25rem solid #858796 !important; }
-    .border-left-success { border-left: .25rem solid #1cc88a !important; }
-    .border-left-info { border-left: .25rem solid #36b9cc !important; }
-    .border-left-warning { border-left: .25rem solid #f6c23e !important; }
-    .text-xs { font-size: .7rem; }
-    .text-gray-300 { color: #dddfeb !important; }
-</style>
 {% endblock %}

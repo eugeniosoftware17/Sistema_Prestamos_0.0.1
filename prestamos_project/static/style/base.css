@@ -49,12 +49,32 @@ body {
     padding-bottom: 0.5rem;
     display: flex;
     align-items: center;
+    gap: 0.75rem; /* Espacio entre logo y texto */
 }
 .navbar-brand img {
+    height: 50px; /* Estilo movido desde el HTML */
     transition: opacity 0.2s ease;
 }
 .navbar-brand img:hover {
     opacity: 0.9;
+}
+
+.navbar-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar-brand-title {
+    display: block;
+    font-size: 1.2rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.navbar-brand-subtitle {
+    display: block;
+    font-size: 0.8rem;
+    color: #566573;
 }
 
 /* Portal & Login Page Logo */
@@ -71,10 +91,19 @@ body {
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .navbar-brand img {
-        height: 50px;
+        height: 45px; /* Ligeramente más pequeño en móvil */
     }
     .portal-logo-container img {
         height: 65px;
+    }
+    .navbar-brand-subtitle {
+        display: none; /* Oculta el subtítulo en pantallas pequeñas */
+    }
+    .navbar-brand-title {
+        font-size: 1.1rem; /* Reduce el tamaño del título en móvil */
+    }
+    .top-navbar {
+        padding: 0 10px; /* Reduce el padding horizontal de la barra de navegación */
     }
 }
 
@@ -215,26 +244,9 @@ body {
 
 /* Submenú de la barra lateral */
 .vertical-navbar ul.submenu {
-    display: none;
     list-style: none;
     padding-left: 0;
     background-color: #F8F9F9;
-}
-
-.vertical-navbar ul.submenu li a {
-    font-size: 14px;
-    padding: 12px 20px;
-    padding-left: 45px;
-    color: #566573;
-    font-weight: 400;
-}
-
-.vertical-navbar ul.submenu li a:hover {
-    color: #3498db; /* NUEVO: Azul vibrante */
-}
-
-.vertical-navbar ul.submenu.active {
-    display: block;
 }
 
 .vertical-navbar i {
@@ -352,29 +364,320 @@ main {
 
 .table th,
 .table td {
-    padding: 0.9rem;
+    padding: 1rem 1.25rem;
     vertical-align: middle;
-    border-top: 1px solid #E9ECEF;
+    text-align: left;
+    border: none;
 }
 
 .table thead th {
-    vertical-align: bottom;
-    border-bottom: 2px solid #DEE2E6;
-    text-align: left;
+    background-color: #f8f9fa;
+    color: #495057;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: #2c3e50; /* NUEVO: Azul oscuro */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #dee2e6;
 }
 
-.table tbody tr:nth-of-type(odd) {
-    background-color: rgba(0,0,0,0.02);
+.table tbody tr {
+    border-bottom: 1px solid #eaedf1;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.table tbody tr:last-of-type {
+    border-bottom: none;
 }
 
 .table tbody tr:hover {
-    background-color: #F5F7FA;
+    background-color: #f5f7fa;
+}
+
+/* Centrar columnas de ID y Acciones */
+.table th:first-child, .table td:first-child,
+.table th:last-child, .table td:last-child {
+    text-align: center;
+}
+
+/* Estilo para enlaces dentro de la tabla */
+.table tbody a {
+    color: #2c3e50; /* Color de texto principal */
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.table tbody a:hover {
+    text-decoration: underline;
+    color: #3498db; /* Color de realce al pasar el ratón */
+}
+
+/* Estilo para el mensaje de 'tabla vacía' */
+.table td[colspan] {
+    padding: 3rem 1rem;
+    text-align: center;
+    color: #6c757d;
+    font-size: 1.1rem;
+    background-color: #f8f9fa;
+}
+
+/* Mejora para los botones de acción en la tabla */
+.table .btn-sm {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.table .btn-secondary.btn-sm {
+    background-color: transparent;
+    border-color: #adb5bd;
+    color: #495057;
+}
+
+.table .btn-secondary.btn-sm:hover {
+    background-color: #495057;
+    border-color: #495057;
+    color: #fff;
 }
 
 .table .text-center {
     text-align: center;
+}
+
+/* ==================================================== */
+/* === DISEÑO DE FORMULARIOS MEJORADO === */
+/* ==================================================== */
+
+/* Aumenta el padding dentro de las tarjetas que contienen formularios */
+.card-body {
+    padding: 2rem;
+}
+
+/* Estilo para las etiquetas de los campos */
+.form-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.75rem;
+}
+
+/* Estilo para los campos de texto, select, etc. */
+.form-control,
+.form-select {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 0.75rem 1rem;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #3498db; /* Color de foco principal */
+    box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, .25);
+}
+
+/* Oculta el <hr> por defecto, se reemplaza con el borde del título */
+form hr {
+    display: none;
+}
+
+/* Estilo para los títulos de sección dentro de los formularios */
+form h5 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+form h5:first-of-type {
+    margin-top: 0; /* El primer título de sección no necesita margen superior */
+}
+
+/* Pie de página para los botones de acción del formulario */
+.form-actions {
+    background-color: #f8f9fa;
+    padding: 1.5rem 2rem;
+    /* Margen negativo para que ocupe todo el ancho del padding del card-body */
+    margin: 2.5rem -2rem -2rem -2rem;
+    border-top: 1px solid #e9ecef;
+    border-bottom-left-radius: 8px; /* Redondea las esquinas inferiores */
+    border-bottom-right-radius: 8px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+
+/* ==================================================== */
+/* === VISTA DE TARJETAS PARA TABLAS EN MÓVILES === */
+/* ==================================================== */
+@media (max-width: 768px) {
+    .content-container {
+        /* Se elimina el fondo y borde del contenedor para dar protagonismo a las tarjetas */
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0.5rem 0; /* Se ajusta el padding */
+    }
+
+    .table-responsive {
+        border: none; /* Se elimina el borde del contenedor responsive */
+    }
+
+    /* Se oculta el encabezado de la tabla, ya que los títulos estarán en cada tarjeta */
+    .table thead {
+        display: none;
+    }
+
+    /* Se cambia el display de los elementos de la tabla para que se comporten como bloques */
+    .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+    }
+
+    /* Cada fila se convierte en una tarjeta */
+    .table tr {
+        background: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    }
+
+    .table tbody tr:hover {
+        transform: none; /* Se desactiva el efecto hover de escritorio */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    }
+
+    /* Cada celda se convierte en una fila dentro de la tarjeta */
+    .table td {
+        display: flex;
+        justify-content: space-between; /* Etiqueta a la izquierda, valor a la derecha */
+        align-items: center;
+        padding: 0.8rem 0.5rem;
+        border-bottom: 1px solid #f0f0f0; /* Separador sutil entre datos */
+        text-align: right; /* El valor del dato se alinea a la derecha */
+    }
+
+    .table td:last-of-type {
+        border-bottom: none;
+    }
+
+    /* Se usa ::before para crear las etiquetas de cada dato */
+    .table td::before {
+        font-weight: 600;
+        color: #566573;
+        text-align: left;
+        padding-right: 1rem;
+    }
+
+    /* Asignación de etiquetas a cada columna (esto depende del orden de tus columnas) */
+    .table td:nth-of-type(1) { display: none; } /* Se oculta el ID en la vista de tarjeta */
+    .table td:nth-of-type(2)::before { content: 'Nombres'; }
+    .table td:nth-of-type(3)::before { content: 'Apellidos'; }
+    .table td:nth-of-type(4)::before { content: 'Cédula'; }
+    .table td:nth-of-type(5)::before { content: 'Teléfono'; }
+    .table td:nth-of-type(6)::before { content: 'Fecha Registro'; }
+    
+    /* Celda de Acciones */
+    .table td:nth-of-type(7) {
+        padding-top: 1rem;
+    }
+    .table td:nth-of-type(7)::before {
+        display: none; /* La celda de acciones no necesita etiqueta */
+    }
+    .table td:nth-of-type(7) .btn {
+        width: 100%; /* El botón ocupa todo el ancho */
+        text-align: center;
+    }
+}
+
+/* ==================================================== */
+/* === VISTA DE TARJETAS PARA TABLAS EN MÓVILES === */
+/* ==================================================== */
+@media (max-width: 768px) {
+    .content-container {
+        /* Se elimina el fondo y borde del contenedor para dar protagonismo a las tarjetas */
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0.5rem 0; /* Se ajusta el padding */
+    }
+
+    .table-responsive {
+        border: none; /* Se elimina el borde del contenedor responsive */
+    }
+
+    /* Se oculta el encabezado de la tabla, ya que los títulos estarán en cada tarjeta */
+    .table thead {
+        display: none;
+    }
+
+    /* Se cambia el display de los elementos de la tabla para que se comporten como bloques */
+    .table, .table tbody, .table tr, .table td {
+        display: block;
+        width: 100%;
+    }
+
+    /* Cada fila se convierte en una tarjeta */
+    .table tr {
+        background: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    }
+
+    .table tbody tr:hover {
+        transform: none; /* Se desactiva el efecto hover de escritorio */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    }
+
+    /* Cada celda se convierte en una fila dentro de la tarjeta */
+    .table td {
+        display: flex;
+        justify-content: space-between; /* Etiqueta a la izquierda, valor a la derecha */
+        align-items: center;
+        padding: 0.8rem 0.5rem;
+        border-bottom: 1px solid #f0f0f0; /* Separador sutil entre datos */
+        text-align: right; /* El valor del dato se alinea a la derecha */
+    }
+
+    .table td:last-of-type {
+        border-bottom: none;
+    }
+
+    /* Se usa ::before para crear las etiquetas de cada dato */
+    .table td::before {
+        font-weight: 600;
+        color: #566573;
+        text-align: left;
+        padding-right: 1rem;
+    }
+
+    /* Asignación de etiquetas a cada columna (esto depende del orden de tus columnas) */
+    .table td:nth-of-type(1) { display: none; } /* Se oculta el ID en la vista de tarjeta */
+    .table td:nth-of-type(2)::before { content: 'Nombres'; }
+    .table td:nth-of-type(3)::before { content: 'Apellidos'; }
+    .table td:nth-of-type(4)::before { content: 'Cédula'; }
+    .table td:nth-of-type(5)::before { content: 'Teléfono'; }
+    .table td:nth-of-type(6)::before { content: 'Fecha Registro'; }
+    
+    /* Celda de Acciones */
+    .table td:nth-of-type(7) {
+        padding-top: 1rem;
+    }
+    .table td:nth-of-type(7)::before {
+        display: none; /* La celda de acciones no necesita etiqueta */
+    }
+    .table td:nth-of-type(7) .btn {
+        width: 100%; /* El botón ocupa todo el ancho */
+        text-align: center;
+    }
 }
 
 /* --- Formularios --- */
@@ -751,3 +1054,120 @@ form p > label {
     color: #85929E; /* Un gris sutil y elegante */
 }
 
+/* Estilos del Panel de Control (Dashboard) */
+/* Solución de alineación con Flexbox para tarjetas viejas */
+.card-body .row .col.mr-2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centra el contenido verticalmente */
+}
+
+.border-left-primary { border-left: .25rem solid #4e73df !important; }
+.border-left-secondary { border-left: .25rem solid #858796 !important; }
+.border-left-success { border-left: .25rem solid #1cc88a !important; }
+.border-left-info { border-left: .25rem solid #36b9cc !important; }
+.border-left-warning { border-left: .25rem solid #f6c23e !important; }
+.text-xs { font-size: .7rem; }
+.text-gray-300 { color: #dddfeb !important; }
+
+/* Efecto hover para tarjetas que son enlaces */
+a.text-decoration-none .card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+a.text-decoration-none .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+/* ================================= */
+/* === TARJETAS DE RESUMEN (PANEL) === */
+/* ================================= */
+
+.summary-card .card-body {
+    text-align: center; /* Centra todo el contenido */
+}
+
+.summary-card-icon {
+    margin-bottom: 0.75rem; /* Espacio debajo del ícono */
+    opacity: 0.7;
+}
+
+.summary-card .text-xs {
+    font-size: 0.8rem; /* Tamaño de fuente para el título */
+}
+
+.summary-card .h5 {
+    font-size: 1.75rem; /* Tamaño de fuente para el valor principal */
+    margin-bottom: 0.25rem !important;
+}
+
+/* Colores para los íconos y texto de las tarjetas de resumen */
+.summary-card .text-success { color: #1cc88a !important; }
+.summary-card .text-primary { color: #4e73df !important; }
+.summary-card .text-warning { color: #f6c23e !important; }
+.summary-card .text-info { color: #36b9cc !important; }
+
+/* Efecto hover para tarjetas que son enlaces */
+a .summary-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+a .summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+/* ================================= */
+/* === ENCABEZADO DE PÁGINA RESPONSIVO === */
+/* ================================= */
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.25rem 1rem; /* Ajuste de padding para móvil */
+    gap: 1.5rem; /* Espacio entre el bloque de título y el de acciones */
+  }
+
+  .page-header h1 {
+    font-size: 1.6rem; /* Reducción de fuente para el título principal */
+  }
+
+  .page-header p {
+    font-size: 0.95rem; /* Reducción de fuente para el subtítulo */
+    margin-top: 0.25rem;
+  }
+
+  .header-actions {
+    flex-direction: column; /* Apila los elementos de acción */
+    width: 100%; /* Ocupa todo el ancho */
+    gap: 0.75rem; /* Espacio entre la búsqueda y el botón */
+  }
+
+  .header-actions .search-form,
+  .header-actions .btn {
+    width: 100%; /* Asegura que ambos ocupen el ancho completo */
+  }
+
+  /* Ajusta el botón en el encabezado en móvil (si existe) */
+  .page-header .btn {
+    margin-top: 0; /* Se elimina el margen superior, ahora se usa 'gap' */
+  }
+
+  .summary-card .h5 {
+    font-size: 1rem; /* Reduce el tamaño de fuente para móviles */
+  }
+
+  .summary-card .card-body {
+    padding: 0.75rem; /* Reduce el padding de las tarjetas de resumen en móvil */
+  }
+
+  .summary-card-icon.fa-2x {
+    font-size: 1.2em; /* Reduce el tamaño del icono en móvil */
+  }
+  .summary-card .text-xs {
+    font-size: 0.7rem; /* Reduce el tamaño de fuente del título */
+  }
+  .summary-card small {
+    font-size: 0.7rem; /* Reduce el tamaño de fuente del subtítulo */
+  }
+}

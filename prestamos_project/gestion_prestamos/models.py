@@ -289,9 +289,10 @@ class Prestamo(models.Model):
 
     def registrar_pago(self, monto_pagado):
         """
-        Registra un pago para este préstamo y lo distribuye entre las cuotas pendientes.
-        La fecha del pago se establece automáticamente al momento de la creación.
+        Registra un pago para este préstamo, lo distribuye entre las cuotas pendientes
+        y devuelve una lista de los objetos Pago creados.
         """
+        pagos_creados = []
         monto_a_distribuir = monto_pagado
         cuotas_pendientes = self.cuotas.filter(
             estado__in=['pendiente', 'pagada_parcialmente', 'vencida']
@@ -301,23 +302,23 @@ class Prestamo(models.Model):
             if monto_a_distribuir <= 0:
                 break
 
-            # AHORA INCLUYE LA PENALIDAD
             monto_necesario = cuota.monto_total_a_pagar - cuota.total_pagado
             pago_a_cuota = min(monto_a_distribuir, monto_necesario)
 
-            # La fecha_pago ya no se pasa, se crea automáticamente.
-            Pago.objects.create(
+            nuevo_pago = Pago.objects.create(
                 cuota=cuota,
                 monto_pagado=pago_a_cuota
             )
+            pagos_creados.append(nuevo_pago)
             
             cuota.actualizar_estado()
             monto_a_distribuir -= pago_a_cuota
 
-        # Se verifica si el préstamo está completamente saldado.
         if not self.cuotas.filter(estado__in=['pendiente', 'pagada_parcialmente', 'vencida']).exists():
             self.estado = 'pagado'
             self.save()
+        
+        return pagos_creados
 
     class Meta:
         db_table = 'prestamos_prestamo'

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Préstamo #{{ el_prestamo_actual.id }} - Imprimir</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20mm; /* Márgenes estándar para impresión */
+            font-size: 10pt;
+            color: #333;
+        }
+        .header, .footer {
+            text-align: center;
+            margin-bottom: 20mm;
+        }
+        .header img {
+            max-width: 150px;
+            max-height: 80px;
+            margin-bottom: 10px;
+        }
+        .header h1 {
+            font-size: 14pt;
+            margin-bottom: 5mm;
+        }
+        .info-section {
+            margin-bottom: 15mm;
+            border: 1px solid #eee;
+            padding: 10px;
+        }
+        .info-section h2 {
+            font-size: 12pt;
+            color: #555;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+        .info-section p {
+            margin: 0 0 5px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15mm;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+
+        /* Evitar saltos de página dentro de tablas o secciones importantes */
+        .no-break {
+            page-break-inside: avoid;
+        }
+        .cuotas-table {
+            font-size: 9pt;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        {% if configuracion.logo %}
+            <img src="{{ configuracion.logo.url }}" alt="Logo de la Empresa">
+        {% endif %}
+        <h1>Detalle de Préstamo</h1>
+        <p><strong>Fecha de Impresión:</strong> {{ "now"|date:"d/m/Y H:i" }}</p>
+        <p><strong>ID del Préstamo:</strong> {{ el_prestamo_actual.id }}</p>
+    </div>
+
+    <div class="info-section no-break">
+        <h2>Datos del Cliente</h2>
+        <p><strong>Cliente:</strong> {{ el_prestamo_actual.cliente.nombres }} {{ el_prestamo_actual.cliente.apellidos }}</p>
+        <p><strong>Cédula/Documento:</strong> {{ el_prestamo_actual.cliente.cedula }}</p>
+        <p><strong>Teléfono:</strong> {{ el_prestamo_actual.cliente.telefono }}</p>
+        <p><strong>Dirección:</strong> {{ el_prestamo_actual.cliente.direccion }}</p>
+    </div>
+
+    <div class="info-section no-break">
+        <h2>Detalles del Préstamo</h2>
+        <p><strong>Tipo de Préstamo:</strong> {{ el_prestamo_actual.tipo_prestamo.nombre }}</p>
+        <p><strong>Monto Solicitado:</strong> ${{ el_prestamo_actual.monto|floatformat:2 }}</p>
+        <p><strong>Tasa de Interés:</strong> {{ el_prestamo_actual.tasa_interes|floatformat:2 }}% {{ el_prestamo_actual.get_periodo_tasa_display }}</p>
+        <p><strong>Plazo:</strong> {{ el_prestamo_actual.plazo_meses }} meses</p>
+        <p><strong>Frecuencia de Pago:</strong> {{ el_prestamo_actual.get_frecuencia_pago_display }}</p>
+        <p><strong>Fecha de Desembolso:</strong> {{ el_prestamo_actual.fecha_desembolso|date:"d/m/Y" }}</p>
+    </div>
+
+    {% if configuracion.mostrar_seccion_garante and garante %}
+    <div class="info-section no-break">
+        <h2>Información del Garante</h2>
+        <p><strong>Nombre:</strong> {{ garante.nombre_completo }}</p>
+        <p><strong>Cédula:</strong> {{ garante.cedula }}</p>
+        <p><strong>Teléfono:</strong> {{ garante.telefono }}</p>
+        <p><strong>Dirección:</strong> {{ garante.direccion }}</p>
+    </div>
+    {% endif %}
+
+    {% if configuracion.mostrar_tabla_amortizacion %}
+    <div class="info-section no-break">
+        <h2>Tabla de Amortización</h2>
+        <table class="cuotas-table">
+            <thead>
+                <tr>
+                    <th># Cuota</th>
+                    <th>Fecha Vencimiento</th>
+                    <th class="text-right">Capital</th>
+                    <th class="text-right">Interés</th>
+                    <th class="text-right">Total Cuota</th>
+                    <th class="text-right">Saldo Pendiente</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cuota in cuotas_del_prestamo %}
+                <tr>
+                    <td>{{ cuota.numero_cuota }}</td>
+                    <td>{{ cuota.fecha_vencimiento|date:"d/m/Y" }}</td>
+                    <td class="text-right">${{ cuota.capital|floatformat:2 }}</td>
+                    <td class="text-right">${{ cuota.interes|floatformat:2 }}</td>
+                    <td class="text-right">${{ cuota.monto_cuota|floatformat:2 }}</td>
+                    <td class="text-right">${{ cuota.saldo_pendiente|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="2">Totales</th>
+                    <th class="text-right">${{ totales_amortizacion.total_capital|floatformat:2 }}</th>
+                    <th class="text-right">${{ totales_amortizacion.total_interes|floatformat:2 }}</th>
+                    <th class="text-right">${{ totales_amortizacion.total_cuota|floatformat:2 }}</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    {% endif %}
+
+    <div class="info-section no-break">
+        <h2>Resumen Financiero del Préstamo</h2>
+        <p><strong>Total pagado hasta ahora:</strong> ${{ pago_total_realizado|floatformat:2 }}</p>
+        <p><strong>Total restante:</strong> ${{ total_faltante|floatformat:2 }}</p>
+        <p><strong>Ganancia estimada:</strong> ${{ ganancia_estimada|floatformat:2 }}</p>
+        {% if total_penalidades_acumuladas > 0 %}
+            <p><strong>Penalidades acumuladas:</strong> ${{ total_penalidades_acumuladas|floatformat:2 }}</p>
+        {% endif %}
+    </div>
+
+    {% if configuracion.pie_de_pagina %}
+    <div class="footer">
+        <p>{{ configuracion.pie_de_pagina }}</p>
+    </div>
+    {% endif %}
+
+    <script>
+        window.onload = function() {
+            window.print();
+        };
+    </script>
+</body>
+</html>
