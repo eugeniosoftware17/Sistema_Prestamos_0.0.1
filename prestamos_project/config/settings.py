@@ -17,16 +17,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY', default='django-insecure-ux+45xfu@24j81&(qdc2ti&d$8n)#gflucndbg85lkrm#jbp2+')
+SECRET_KEY = env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG', default=True)
+DEBUG = env.bool('DEBUG', default=False)
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['127.0.0.1', 'localhost','10.0.0.41', 'eugeniosoftware17.pythonanywhere.com'])
+print(f"DEBUGGING ALLOWED_HOSTS: {ALLOWED_HOSTS}")
 
 
 # Application definition
@@ -40,12 +42,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'dashboard',
     'gestion_prestamos',
+    'configuracion.apps.ConfiguracionConfig',
     'django_select2',
     'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'dashboard.middleware.BasicAuthMiddleware', # Guardián global del sitio
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,10 +85,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 DATABASES = {
-    'default': {
-             'ENGINE': 'django.db.backends.sqlite3',
-             'NAME': BASE_DIR / 'db.sqlite3',
-}
+    'default': env.db(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 }
 
 # Password validation
@@ -121,6 +122,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / 'static_root'
 
+# Media files (Uploaded by user)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -145,3 +150,13 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = env('EMAIL_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_APP_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# ==================================================
+# === CONFIGURACIÓN DE LLAVE MAESTRA (BASIC AUTH) ===
+# ==================================================
+# Permite activar o desactivar la protección global del sitio.
+BASIC_AUTH_ENABLED = env.bool('BASIC_AUTH_ENABLED', default=False)
+# Usuario para la "llave maestra".
+BASIC_AUTH_USER = env('BASIC_AUTH_USER', default='admin')
+# Contraseña para la "llave maestra".
+BASIC_AUTH_PASSWORD = env('BASIC_AUTH_PASSWORD', default='admin')
